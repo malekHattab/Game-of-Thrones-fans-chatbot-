@@ -1,5 +1,6 @@
 from langchain_community.document_loaders import PDFPlumberLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.schema import Document
 
 # Scene Tags
 scene_tags = {
@@ -47,8 +48,7 @@ characters = {
     "Jon's Direwolf": ["Ghost", "direwolf", "Jon's wolf", "loyal", "silent", "protective", "brave", "beautiful", "powerful"]
 }
 
-
-# Load PDF and split into sections
+# Function to load and split the PDF
 def load_and_split_pdf(pdf_path):
     loader = PDFPlumberLoader(pdf_path)
     documents = loader.load()
@@ -56,7 +56,7 @@ def load_and_split_pdf(pdf_path):
     split_documents = text_splitter.split_documents(documents)
     return split_documents
 
-# Tagging function
+# Function to tag scenes and characters
 def tag_scenes_and_characters(documents):
     for doc in documents:
         doc.metadata["tags"] = []
@@ -74,37 +74,3 @@ def tag_scenes_and_characters(documents):
                 
     return documents
 
-# Q&A System Class
-class GoTQASystem:
-    def __init__(self, huggingface_token):
-        self.huggingface_token = huggingface_token
-        self.vector_store = None
-        self.conversation_chain = None
-
-    def create_embeddings(self, documents):
-        """Create embeddings using HuggingFace's model and store in FAISS with metadata."""
-        try:
-            embedding_model = HuggingFaceEmbeddings(
-                model_name="all-MiniLM-L6-v2",
-                model_kwargs={'device': 'cpu'}
-            )
-            self.vector_store = FAISS.from_documents(documents, embedding_model)
-            print("✓ Embeddings created successfully!")
-        except Exception as e:
-            print(f"Error creating embeddings: {str(e)}")
-            raise
-
-    def setup_conversation_chain(self):
-        """Set up a conversation chain with LLMChain and custom context support."""
-        if self.huggingface_token:
-            os.environ["HUGGINGFACEHUB_API_TOKEN"] = self.huggingface_token
-
-        try:
-            llm = HuggingFaceHub(
-                repo_id="google/flan-t5-large",
-                model_kwargs={"temperature": 0.5, "max_length": 512}
-            )
-            # Additional code for conversation setup...
-        except Exception as e:
-            print(f"Error setting up conversation chain: {str(e)}")
-            raise
