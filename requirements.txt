@@ -1,0 +1,7 @@
+langchain
+langchain-community
+pdfplumber
+faiss-cpu
+transformers
+torch  # Optional: only if Hugging Face model needs it
+dotenv  # For loading environment variables
