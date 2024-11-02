@@ -1,0 +1,18 @@
+# Ignore Python cache files
+__pycache__/
+*.py[cod]
+
+# Ignore environment variables
+.env
+
+# Ignore model weights and large files
+*.pt
+*.h5
+
+# Ignore logs and temporary files
+*.log
+*.out
+*.tmp
+
+# Ignore virtual environment
+venv/
